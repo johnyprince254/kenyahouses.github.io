@@ -1,0 +1,253 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Property - KenyaHouses{% endblock %}
+
+{% block content %}
+<section class="form-section">
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <a href="{{ url_for('dashboard') }}" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <h1>Edit Property</h1>
+            </div>
+            
+            <form method="POST" action="{{ url_for('edit_property', prop_id=property.id) }}" enctype="multipart/form-data">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Property Title *</label>
+                        <input type="text" name="title" value="{{ property.title }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Location *</label>
+                        <input type="text" name="location" value="{{ property.location }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Location Key *</label>
+                        <select name="locationKey" required>
+                            <option value="nairobi" {% if property.locationKey == 'nairobi' %}selected{% endif %}>Nairobi</option>
+                            <option value="mombasa" {% if property.locationKey == 'mombasa' %}selected{% endif %}>Mombasa</option>
+                            <option value="kisumu" {% if property.locationKey == 'kisumu' %}selected{% endif %}>Kisumu</option>
+                            <option value="nakuru" {% if property.locationKey == 'nakuru' %}selected{% endif %}>Nakuru</option>
+                            <option value="eldoret" {% if property.locationKey == 'eldoret' %}selected{% endif %}>Eldoret</option>
+                            <option value="thika" {% if property.locationKey == 'thika' %}selected{% endif %}>Thika</option>
+                            <option value="malindi" {% if property.locationKey == 'malindi' %}selected{% endif %}>Malindi</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Property Type *</label>
+                        <select name="type" required>
+                            <option value="house" {% if property.type == 'house' %}selected{% endif %}>House</option>
+                            <option value="apartment" {% if property.type == 'apartment' %}selected{% endif %}>Apartment</option>
+                            <option value="villa" {% if property.type == 'villa' %}selected{% endif %}>Villa</option>
+                            <option value="townhouse" {% if property.type == 'townhouse' %}selected{% endif %}>Townhouse</option>
+                            <option value="land" {% if property.type == 'land' %}selected{% endif %}>Land</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Purpose *</label>
+                        <select name="purpose" required>
+                            <option value="sale" {% if property.purpose == 'sale' %}selected{% endif %}>For Sale</option>
+                            <option value="rent" {% if property.purpose == 'rent' %}selected{% endif %}>For Rent</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Price (KES) *</label>
+                        <input type="number" name="price" value="{{ property.price }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Bedrooms *</label>
+                        <input type="number" name="bedrooms" value="{{ property.bedrooms }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Bathrooms *</label>
+                        <input type="number" name="bathrooms" value="{{ property.bathrooms }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Area (sqm) *</label>
+                        <input type="number" name="area" value="{{ property.area }}" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Latitude</label>
+                        <input type="number" step="any" name="lat" value="{{ property.lat }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Longitude</label>
+                        <input type="number" step="any" name="lng" value="{{ property.lng }}">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Description *</label>
+                    <textarea name="description" rows="4" required>{{ property.description }}</textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Current Images</label>
+                    <div class="current-images">
+                        {% for img in property.images %}
+                        <img src="/{{ img }}" alt="Property image" class="thumb">
+                        {% endfor %}
+                    </div>
+                    <label>Upload New Images (optional)</label>
+                    <input type="file" name="images" multiple accept="image/*" class="file-input">
+                    <p class="help-text">Leave empty to keep current images. Select new images to replace.</p>
+                </div>
+                
+                <div class="form-divider">
+                    <h3>Contact Information</h3>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Contact Name</label>
+                        <input type="text" name="contact_name" value="{{ property.contact_name|default('') }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Contact Email</label>
+                        <input type="email" name="contact_email" value="{{ property.contact_email|default('') }}">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Contact Phone</label>
+                        <input type="tel" name="contact_phone" value="{{ property.contact_phone|default('') }}">
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-save"></i> Update Property
+                    </button>
+                    <a href="{{ url_for('dashboard') }}" class="btn-outline">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<style>
+.form-section {
+    padding: 120px 0 60px;
+    background: #f8f9fa;
+    min-height: 100vh;
+}
+.form-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.08);
+}
+.form-header {
+    margin-bottom: 30px;
+}
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #1a7f37;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+.form-header h1 {
+    font-size: 1.8rem;
+    color: #1a1a2e;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+.form-group label {
+    display: block;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #1a1a2e;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #1a7f37;
+}
+.full-width {
+    grid-column: span 3;
+}
+.file-input {
+    padding: 10px;
+    border: 2px dashed #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.file-input:hover {
+    border-color: #1a7f37;
+}
+.help-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 5px;
+}
+.current-images {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+.thumb {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+.form-divider {
+    border-top: 2px solid #e9ecef;
+    margin: 25px 0;
+    padding-top: 25px;
+}
+.form-divider h3 {
+    color: #1a1a2e;
+    font-size: 1.2rem;
+}
+.form-actions {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+@media (max-width: 768px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .full-width {
+        grid-column: span 1;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}KenyaHouses - Find Your Dream Home in Kenya{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1>Find Your Dream Home in Kenya</h1>
+        <p>Browse thousands of properties for sale and rent across Nairobi, Mombasa, Kisumu, and more</p>
+        
+        <div class="search-box">
+            <div class="search-row">
+                <div class="search-field">
+                    <label for="search-location">Location</label>
+                    <select id="search-location">
+                        <option value="">All Locations</option>
+                        <option value="nairobi">Nairobi</option>
+                        <option value="mombasa">Mombasa</option>
+                        <option value="kisumu">Kisumu</option>
+                        <option value="nakuru">Nakuru</option>
+                        <option value="eldoret">Eldoret</option>
+                        <option value="thika">Thika</option>
+                        <option value="malindi">Malindi</option>
+                    </select>
+                </div>
+                <div class="search-field">
+                    <label for="search-type">Property Type</label>
+                    <select id="search-type">
+                        <option value="">All Types</option>
+                        <option value="house">House</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="villa">Villa</option>
+                        <option value="land">Land</option>
+                        <option value="townhouse">Townhouse</option>
+                    </select>
+                </div>
+                <div class="search-field">
+                    <label for="search-price">Max Price (KES)</label>
+                    <select id="search-price">
+                        <option value="">Any Price</option>
+                        <option value="5000000">Under 5M</option>
+                        <option value="10000000">Under 10M</option>
+                        <option value="20000000">Under 20M</option>
+                        <option value="50000000">Under 50M</option>
+                    </select>
+                </div>
+                <div class="search-field">
+                    <label for="search-bedrooms">Bedrooms</label>
+                    <select id="search-bedrooms">
+                        <option value="">Any</option>
+                        <option value="1">1+</option>
+                        <option value="2">2+</option>
+                        <option value="3">3+</option>
+                        <option value="4">4+</option>
+                    </select>
+                </div>
+                <button class="search-btn" id="searchBtn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="stats">
+    <div class="container">
+        <div class="stat-item">
+            <i class="fas fa-building"></i>
+            <span class="stat-number">{{ properties|length }}+</span>
+            <span class="stat-label">Properties Listed</span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span class="stat-number">7</span>
+            <span class="stat-label">Counties Covered</span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-users"></i>
+            <span class="stat-number">1200+</span>
+            <span class="stat-label">Happy Clients</span>
+        </div>
+        <div class="stat-item">
+            <i class="fas fa-star"></i>
+            <span class="stat-number">4.8</span>
+            <span class="stat-label">Average Rating</span>
+        </div>
+    </div>
+</section>
+
+<section class="listings" id="listings">
+    <div class="container">
+        <div class="section-header">
+            <h2>Featured Properties</h2>
+            <p>Explore our handpicked selection of properties across Kenya</p>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="sale">For Sale</button>
+            <button class="filter-btn" data-filter="rent">For Rent</button>
+            <button class="filter-btn" data-filter="house">Houses</button>
+            <button class="filter-btn" data-filter="apartment">Apartments</button>
+            <button class="filter-btn" data-filter="villa">Villas</button>
+        </div>
+
+        <div class="results-info">
+            <span id="resultsCount">Showing {{ properties|length }} properties</span>
+        </div>
+
+        <div class="property-grid" id="propertyGrid">
+            {% for property in properties %}
+            <div class="property-card" data-type="{{ property.type }}" data-purpose="{{ property.purpose }}" data-price="{{ property.price }}" data-location="{{ property.locationKey }}" data-bedrooms="{{ property.bedrooms }}">
+                <div class="property-image">
+                    <img src="{{ property.image }}" alt="{{ property.title }}" loading="lazy">
+                    <span class="property-badge badge-{{ property.purpose }}">
+                        {{ 'For Sale' if property.purpose == 'sale' else 'For Rent' }}
+                    </span>
+                </div>
+                <div class="property-info">
+                    <div class="property-price">
+                        {% if property.purpose == 'rent' %}
+                            KES {{ "{:,}".format(property.price) }}<span>/month</span>
+                        {% else %}
+                            KES {{ "{:,}".format(property.price) }}
+                        {% endif %}
+                    </div>
+                    <h3 class="property-title">{{ property.title }}</h3>
+                    <p class="property-location"><i class="fas fa-map-marker-alt"></i> {{ property.location }}</p>
+                    <div class="property-features">
+                        <span class="feature"><i class="fas fa-bed"></i> {{ property.bedrooms }} Beds</span>
+                        <span class="feature"><i class="fas fa-bath"></i> {{ property.bathrooms }} Baths</span>
+                        <span class="feature"><i class="fas fa-ruler-combined"></i> {{ property.area }} sqm</span>
+                    </div>
+                </div>
+                <div class="property-actions">
+                    <a href="{{ url_for('property_detail', prop_id=property.id) }}" class="btn-primary">
+                        <i class="fas fa-eye"></i> View Details
+                    </a>
+                    <button class="btn-primary inquire-btn" data-id="{{ property.id }}" data-title="{{ property.title }}">
+                        <i class="fas fa-envelope"></i> Inquire
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="map-section" id="map-section">
+    <div class="container">
+        <div class="section-header">
+            <h2>Properties on Map</h2>
+            <p>Explore property locations across Kenya</p>
+        </div>
+        <div class="map-container">
+            <div id="map"></div>
+        </div>
+    </div>
+</section>
+
+<section class="contact" id="contact">
+    <div class="container">
+        <div class="section-header">
+            <h2>Contact Us</h2>
+            <p>Get in touch with our team for inquiries and viewings</p>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h4>Office Address</h4>
+                        <p>Westlands Business Park, Nairobi, Kenya</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <h4>Phone</h4>
+                        <p>+254 700 123 456</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <h4>Email</h4>
+                        <p>info@kenyahouses.co.ke</p>
+                    </div>
+                </div>
+            </div>
+            <form class="contact-form" id="contactForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" placeholder="John Kamau" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="john@example.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" rows="5" placeholder="Tell us about your property needs..." required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<div class="modal" id="inquiryModal">
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal-content">
+        <button class="modal-close" id="modalClose">
+            <i class="fas fa-times"></i>
+        </button>
+        <h3>Property Inquiry</h3>
+        <p class="modal-subtitle" id="modalPropertyTitle"></p>
+        <form id="inquiryForm">
+            <div class="form-group">
+                <label for="inquiry-name">Your Name</label>
+                <input type="text" id="inquiry-name" placeholder="Your full name" required>
+            </div>
+            <div class="form-group">
+                <label for="inquiry-email">Email</label>
+                <input type="email" id="inquiry-email" placeholder="your@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="inquiry-phone">Phone</label>
+                <input type="tel" id="inquiry-phone" placeholder="+254 7XX XXX XXX">
+            </div>
+            <div class="form-group">
+                <label for="inquiry-message">Message</label>
+                <textarea id="inquiry-message" rows="4" placeholder="I'm interested in this property..." required></textarea>
+            </div>
+            <button type="submit" class="btn-primary btn-full">
+                <i class="fas fa-paper-plane"></i> Send Inquiry
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.property-card').forEach(card => {
+            if (filter === 'all') {
+                card.style.display = 'block';
+            } else if (filter === 'sale' || filter === 'rent') {
+                card.style.display = card.dataset.purpose === filter ? 'block' : 'none';
+            } else {
+                card.style.display = card.dataset.type === filter ? 'block' : 'none';
+            }
+        });
+    });
+});
+
+document.getElementById('searchBtn')?.addEventListener('click', () => {
+    const location = document.getElementById('search-location').value;
+    const type = document.getElementById('search-type').value;
+    const price = document.getElementById('search-price').value;
+    const bedrooms = document.getElementById('search-bedrooms').value;
+    
+    document.querySelectorAll('.property-card').forEach(card => {
+        let show = true;
+        if (location && card.dataset.location !== location) show = false;
+        if (type && card.dataset.type !== type) show = false;
+        if (price && parseInt(card.dataset.price) > parseInt(price)) show = false;
+        if (bedrooms && parseInt(card.dataset.bedrooms) < parseInt(bedrooms)) show = false;
+        card.style.display = show ? 'block' : 'none';
+    });
+});
+
+document.querySelectorAll('.inquire-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('modalPropertyTitle').textContent = btn.dataset.title;
+        document.getElementById('inquiryModal').classList.add('active');
+        document.getElementById('inquiryModal').dataset.propertyId = btn.dataset.id;
+        document.getElementById('inquiryModal').dataset.propertyTitle = btn.dataset.title;
+    });
+});
+
+document.getElementById('modalClose')?.addEventListener('click', () => {
+    document.getElementById('inquiryModal').classList.remove('active');
+});
+
+document.getElementById('modalOverlay')?.addEventListener('click', () => {
+    document.getElementById('inquiryModal').classList.remove('active');
+});
+
+document.getElementById('inquiryForm')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const modal = document.getElementById('inquiryModal');
+    const response = await fetch('/api/inquiry', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name: document.getElementById('inquiry-name').value,
+            email: document.getElementById('inquiry-email').value,
+            phone: document.getElementById('inquiry-phone').value,
+            message: document.getElementById('inquiry-message').value,
+            property_id: modal.dataset.propertyId,
+            property_title: modal.dataset.propertyTitle
+        })
+    });
+    const data = await response.json();
+    if (data.success) {
+        alert('Inquiry sent successfully!');
+        modal.classList.remove('active');
+        e.target.reset();
+    }
+});
+
+document.getElementById('contactForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    alert('Message sent successfully!');
+    e.target.reset();
+});
+
+const map = L.map('map').setView([-0.0236, 37.9062], 6);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+}).addTo(map);
+
+{% for property in properties %}
+L.marker([{{ property.lat }}, {{ property.lng }}]).addTo(map)
+    .bindPopup('<b>{{ property.title }}</b><br>KES {{ "{:,}".format(property.price) }}<br>{{ property.location }}');
+{% endfor %}
+</script>
+{% endblock %}
