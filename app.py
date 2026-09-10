@@ -5,14 +5,17 @@ import uuid
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-app.secret_key = 'kenyahouses_secret_key_2026'
+app.secret_key = os.environ.get('SECRET_KEY', 'kenyahouses_secret_key_2026')
 
-ADMIN_USER = 'johny'
-ADMIN_PASS = 'qwerty12345'
+ADMIN_USER = os.environ.get('ADMIN_USER', 'johny')
+ADMIN_PASS = os.environ.get('ADMIN_PASS', 'qwerty12345')
 
 DATA_FILE = 'data/properties.json'
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+
+os.makedirs('data', exist_ok=True)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -220,3 +223,9 @@ def inquiries():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
+
+# For production
+if __name__ != '__main__':
+    # Ensure data files exist
+    if not os.path.exists(DATA_FILE):
+        save_properties([])
